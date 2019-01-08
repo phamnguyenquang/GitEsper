@@ -1,6 +1,8 @@
-package Development;
+package NmapCaseDevelopment;
 
 import java.util.Map;
+
+import Development.LogEventDev;
 
 public class PortScanDetection {
 	public String getStatement() {

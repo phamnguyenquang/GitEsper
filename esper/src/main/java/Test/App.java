@@ -9,7 +9,6 @@ import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.scopetest.SupportSubscriber;
 
 import Development.LogEventDev;
-import Development.PortScanDetection;
 import Development.SSHbruteForceDev;
 import Development.ShadowBreachDev;
 import Development.jsonIO;
@@ -17,6 +16,7 @@ import Development.logReaderDev;
 import LogReader.LogCombi;
 import LogReader.LogEvent;
 import LogReader.SSHAttackEvent;
+import NmapCaseDevelopment.PortScanDetection;
 import LogReader.Logtransform;
 
 public class App {
