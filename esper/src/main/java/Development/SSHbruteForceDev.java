@@ -2,8 +2,6 @@ package Development;
 
 import java.util.Map;
 
-import LogReader.Logtransform;
-
 public class SSHbruteForceDev {
 	private int count = 0;
 	private int oldCount = 0;

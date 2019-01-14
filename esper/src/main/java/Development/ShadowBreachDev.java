@@ -2,8 +2,6 @@ package Development;
 
 import java.util.Map;
 
-import LogReader.Logtransform;
-
 public class ShadowBreachDev {
 	public String getStatement() {
 		String log2 = "select * from LogEventDev match_recognize( "

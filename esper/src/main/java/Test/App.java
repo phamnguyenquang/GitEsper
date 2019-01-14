@@ -13,11 +13,12 @@ import Development.SSHbruteForceDev;
 import Development.ShadowBreachDev;
 import Development.jsonIO;
 import Development.logReaderDev;
-import LogReader.LogCombi;
-import LogReader.LogEvent;
-import LogReader.SSHAttackEvent;
+import NmapCaseDevelopment.NetFilterLogCaller;
+import NmapCaseDevelopment.NetFilterLogParser;
+import NmapCaseDevelopment.PingScan;
 import NmapCaseDevelopment.PortScanDetection;
-import LogReader.Logtransform;
+import legacy.EventA;
+import legacy.EventB;
 
 public class App {
 
@@ -28,52 +29,49 @@ public class App {
 		 * "sudo cat /var/log/*.log" is called, root session is logged first, then the
 		 * command is executed
 		 */
+		NetFilterLogParser log = new NetFilterLogParser();
+		int size = log.getLogSize();
+
+//		String StatementNet = "select message from NetFilterLogCaller";
+//		String schemaNet = "create schema";
 //
-//		LogCombi logCombination = new LogCombi();
-//		int i = logCombination.authLength();
-//		SSHAttackEvent lp = new SSHAttackEvent();
-
-		logReaderDev testReader = new logReaderDev("/home/quang/journal.log");
-		int i = testReader.size();
-		SSHbruteForceDev lp = new SSHbruteForceDev();
-		ShadowBreachDev sdb = new ShadowBreachDev();
-		PortScanDetection psd = new PortScanDetection();
-
+//		EPServiceProvider engine = EPServiceProviderManager.getDefaultProvider();
+//		EPAdministrator admin = engine.getEPAdministrator();
+//
+//		admin.getConfiguration().addEventType(NetFilterLogCaller.class);
+//
+//		EPStatement log2Statement = admin.createEPL(StatementNet);
+//		log2Statement.addListener((newData, oldData) -> {
+//			String line = (String) newData[0].get("message");
+//			System.out.println(line);
+//		});
+//		for (int i = 0; i < size; ++i) {
+//			engine.getEPRuntime().sendEvent(new NetFilterLogCaller(log, i));
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//
 		EPServiceProvider engine = EPServiceProviderManager.getDefaultProvider();
 		EPAdministrator admin = engine.getEPAdministrator();
-//		engine.getEPAdministrator().getConfiguration().addEventType(SSHAttackEvent.class);
-//		engine.getEPAdministrator().getConfiguration().addEventType(Logtransform.class);
-		engine.getEPAdministrator().getConfiguration().addEventType(SSHbruteForceDev.class);
-		engine.getEPAdministrator().getConfiguration().addEventType(LogEventDev.class);
+		PingScan lp = new PingScan();
+//
+		admin.getConfiguration().addEventType(NetFilterLogCaller.class);
 		admin.getConfiguration().addEventType(PortScanDetection.class);
-//		String schema = "create context Test start @now end after 10 sec";
+		admin.getConfiguration().addEventType(PingScan.class);
 //
-//		String log = "context Test select authLine from LogProcess where authLine.contains('root')";
-//
-//		String log2 = "select * from LogProcess match_recognize( "
-//				+ "measures A as LogProcess1, B as LogProcess2 pattern (A B) define A as A.authLine.contains('ssh'), B as B.authLine.contains('ssh'))";
-
 		SupportSubscriber subscriber = new SupportSubscriber();
-
+//
 		EPStatement log2Statement = admin.createEPL(lp.getStatement());
-		EPStatement log2Statement1 = admin.createEPL((sdb.getStatement()));
-		EPStatement log2Statement2 = admin.createEPL(psd.getStatement());
-//		EPStatement schemaCreate = engine.getEPAdministrator().createEPL(schema);
-//		EPStatement logStatement = engine.getEPAdministrator().createEPL(log);
 
+//
 		log2Statement.setSubscriber(lp);
-		log2Statement1.setSubscriber(sdb);
-		log2Statement2.setSubscriber(psd);
 
-//		log2Statement.addListener((newData, oldData) -> {
-//			String test = (String) newData[0].get("authLine");
-//			String test1 = (String) newData[0].get("sysLine");
-//			System.out.println(test);
-//		});
-		for (int i1 = 0; i1 < i; ++i1) {
-			engine.getEPRuntime().sendEvent(new LogEventDev(testReader, i1));
+		for (int i1 = 0; i1 < size; ++i1) {
+			engine.getEPRuntime().sendEvent(new NetFilterLogCaller(log, i1));
 		}
 
 	}
-
 }
