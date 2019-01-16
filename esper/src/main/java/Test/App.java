@@ -31,9 +31,12 @@ public class App {
 		 */
 		NetFilterLogParser log = new NetFilterLogParser();
 		int size = log.getLogSize();
+		
+		logReaderDev jlog = new logReaderDev("/home/quang/journal.log");
+		int size1 = jlog.size();
 
 //		String StatementNet = "select message from NetFilterLogCaller";
-//		String schemaNet = "create schema";
+
 //
 //		EPServiceProvider engine = EPServiceProviderManager.getDefaultProvider();
 //		EPAdministrator admin = engine.getEPAdministrator();
@@ -54,6 +57,7 @@ public class App {
 //				e.printStackTrace();
 //			}
 //
+		
 		EPServiceProvider engine = EPServiceProviderManager.getDefaultProvider();
 		EPAdministrator admin = engine.getEPAdministrator();
 		PingScan lp = new PingScan();
@@ -61,16 +65,23 @@ public class App {
 		admin.getConfiguration().addEventType(NetFilterLogCaller.class);
 		admin.getConfiguration().addEventType(PortScanDetection.class);
 		admin.getConfiguration().addEventType(PingScan.class);
+		admin.getConfiguration().addEventType(LogEventDev.class);
 //
 		SupportSubscriber subscriber = new SupportSubscriber();
 //
 		EPStatement log2Statement = admin.createEPL(lp.getStatement());
-
+		
 //
 		log2Statement.setSubscriber(lp);
 
-		for (int i1 = 0; i1 < size; ++i1) {
-			engine.getEPRuntime().sendEvent(new NetFilterLogCaller(log, i1));
+		for (int i1 = 0; i1 < size1; ++i1) {
+			engine.getEPRuntime().sendEvent(new LogEventDev(jlog, i1));
+			if(lp.check() == true)
+			{
+				System.out.println("done");
+				break;
+			}
+//			System.out.println(jlog.MessageAt(i1));
 		}
 
 	}

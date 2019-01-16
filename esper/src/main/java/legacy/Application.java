@@ -32,7 +32,7 @@ public class Application extends Thread {
 		String schemaInsertFromA = "Insert into C select property from EventA where property > 60";
 		String schemaInsertFromB = "Insert into C select property from EventB where property < 70";
 		String schemaInsertFromC = "select property from C where C.property > 30";
-		String sequentialInsert = "Insert into C select EventA('property') from pattern [every ( (EventA(property > 60)) -> (EventB(property < 70)) )]";
+		String sequentialInsert = "Insert into C select * from pattern [every ( a=EventA(property > 60) -> b=EventB(property < 70) )]";
 
 		EPServiceProvider engine = EPServiceProviderManager.getDefaultProvider();
 		engine.getEPAdministrator().getConfiguration().addEventType(EventA.class);

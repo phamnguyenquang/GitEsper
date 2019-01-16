@@ -34,20 +34,30 @@ import Development.LogEventDev;
 
 public class PingScan {
 	private int state = 0;
+	private boolean done = false;
 
 	public String getStatement() {
-		String log2 = "select * from NetFilterLogCaller match_recognize("
-				+ "measures A as NetFilterLogCaller1, B as NetFilterLogCaller2 pattern (A B) define A as A.message.contains('PROTO=TCP SPT=80') and A.message.contains('ACK RST'), B as B.message.contains('PROTO=TCP SPT=443')? or B.message.contains('ACK RST')?)";
+		String log2 = "select * from LogEventDev match_recognize("
+				+ "measures A as LogEventDev1, B as LogEventDev2 pattern (A B) define A as A.message.contains('PROTO=ICMP TYPE=8 CODE=0 ')?, B as B.message.contains('PROTO=ICMP TYPE=0 CODE=0')?)";
 		return log2;
 	}
 
-	public void update(Map<String, NetFilterLogCaller> Eventmap) {
-		NetFilterLogCaller LogEventDev1 = (NetFilterLogCaller) Eventmap.get("NetFilterLogCaller1");
-		NetFilterLogCaller LogEventDev2 = (NetFilterLogCaller) Eventmap.get("NetFilterLogCaller2");
-		StringBuffer sb = new StringBuffer();
-		sb.append("scan detected (-PA -PS)");
-		state = 1;
-		System.out.println(sb.toString());
+	public void update(Map<String, LogEventDev> Eventmap) {
+		LogEventDev LogEventDev1 = (LogEventDev) Eventmap.get("LogEventDev1");
+		LogEventDev LogEventDev2 = (LogEventDev) Eventmap.get("LogEventDev2");
+		state += 1;
+		System.out.println(state);
+		if (state >= 1) {
+			StringBuffer sb = new StringBuffer();
+			sb.append("scan detected (-PA -PS)");
+			state = 1;
+			System.out.println(sb.toString());
+			done = true;
+		}
+	}
+
+	public boolean check() {
+		return done;
 	}
 
 	public int getState() {
