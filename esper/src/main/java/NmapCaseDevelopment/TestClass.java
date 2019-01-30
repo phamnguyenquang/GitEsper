@@ -1,9 +1,4 @@
 package NmapCaseDevelopment;
-
-import java.util.Map;
-
-import Development.LogEventDev;
-
 /*
  * -sn (aka -sP) option in Nmap.
  * TCP SYN (-PS:ping -sS:scan)
@@ -32,16 +27,29 @@ import Development.LogEventDev;
  *         
  */
 
-public class PingScan {
+import java.util.Map;
+
+import Development.LogEventDev;
+
+public class TestClass {
 	private int state = 0;
 	private boolean detected = false;
 	private double firstOccur = 0;
+	private String pingLog = "select * from pattern [every (LogEventDev(message.contains('PROTO=ICMP TYPE=8 CODE=0')) -> LogEventDev(message.contains('PROTO=ICMP TYPE=0 CODE=0')))]";
+	private String tcpLog = "select * from pattern [every (LogEventDev(message.contains('PROTO=TCP') and message.contains('ACK')) -> LogEventDev(LogEventDev(message.contains('PROTO=TCP') and message.contains('RST')))]";
+	private String udpLog = "select * from pattern [every (LogEventDev(message.contains('PROTO=UDP')) -> LogEventDev(LogEventDev(message.contains('PROTO=UDP')))]";
 
-	public String getStatement() {
-		String log2 = "select * from LogEventDev match_recognize("
-				+ "measures A as LogEventDev1, B as LogEventDev2 pattern (A B) define A as A.message.contains('PROTO=ICMP TYPE=8 CODE=0 ')?, B as B.message.contains('PROTO=ICMP TYPE=0 CODE=0')?)";
-		String test = "select * from pattern [every (LogEventDev(message.contains('PROTO=ICMP TYPE=8 CODE=0')) -> LogEventDev(message.contains('PROTO=ICMP TYPE=0 CODE=0')))]";
-		return test;
+	public String getPingStatement() {
+		return pingLog;
+	}
+
+	public String getTCPStatement() {
+		return tcpLog;
+	}
+
+	public String getUDPStatement() {
+		return udpLog;
+
 	}
 
 	public void update(Map<String, LogEventDev> Eventmap) {

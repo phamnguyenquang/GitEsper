@@ -9,8 +9,6 @@ import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.scopetest.SupportSubscriber;
 
 import Development.LogEventDev;
-import Development.SSHbruteForceDev;
-import Development.ShadowBreachDev;
 import Development.jsonIO;
 import Development.logReaderDev;
 import NmapCaseDevelopment.NetFilterLogCaller;
@@ -31,7 +29,7 @@ public class App {
 		 */
 		NetFilterLogParser log = new NetFilterLogParser();
 		int size = log.getLogSize();
-		
+
 		logReaderDev jlog = new logReaderDev("/home/quang/journal.log");
 		int size1 = jlog.size();
 
@@ -57,7 +55,7 @@ public class App {
 //				e.printStackTrace();
 //			}
 //
-		
+
 		EPServiceProvider engine = EPServiceProviderManager.getDefaultProvider();
 		EPAdministrator admin = engine.getEPAdministrator();
 		PingScan lp = new PingScan();
@@ -68,20 +66,18 @@ public class App {
 		admin.getConfiguration().addEventType(LogEventDev.class);
 //
 		SupportSubscriber subscriber = new SupportSubscriber();
+
 //
 		EPStatement log2Statement = admin.createEPL(lp.getStatement());
-		
+		System.out.println(lp.getStatement());
 //
 		log2Statement.setSubscriber(lp);
 
 		for (int i1 = 0; i1 < size1; ++i1) {
 			engine.getEPRuntime().sendEvent(new LogEventDev(jlog, i1));
-			if(lp.check() == true)
-			{
-				System.out.println("done");
+			if (lp.check() == true) {
 				break;
 			}
-//			System.out.println(jlog.MessageAt(i1));
 		}
 
 	}

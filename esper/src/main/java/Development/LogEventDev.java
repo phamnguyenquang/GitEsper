@@ -3,6 +3,7 @@ package Development;
 public class LogEventDev {
 	private String message = "";
 	private double Time = 0.0;
+	
 
 	public LogEventDev(logReaderDev reader, int i) {
 		message = reader.MessageAt(i);
