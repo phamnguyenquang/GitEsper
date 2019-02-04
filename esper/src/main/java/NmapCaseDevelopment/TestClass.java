@@ -33,11 +33,13 @@ import Development.LogEventDev;
 
 public class TestClass {
 	private int state = 0;
-	private boolean detected = false;
+	private boolean icmp = false;
+	private boolean tcp = false;
+	private boolean udp = false;
 	private double firstOccur = 0;
 	private String pingLog = "select * from pattern [every (LogEventDev(message.contains('PROTO=ICMP TYPE=8 CODE=0')) -> LogEventDev(message.contains('PROTO=ICMP TYPE=0 CODE=0')))]";
-	private String tcpLog = "select * from pattern [every (LogEventDev(message.contains('PROTO=TCP') and message.contains('ACK')) -> LogEventDev(LogEventDev(message.contains('PROTO=TCP') and message.contains('RST')))]";
-	private String udpLog = "select * from pattern [every (LogEventDev(message.contains('PROTO=UDP')) -> LogEventDev(LogEventDev(message.contains('PROTO=UDP')))]";
+	private String tcpLog = "select * from pattern [every (LogEventDev(message.contains('PROTO=TCP') and message.contains('ACK')) -> LogEventDev((message.contains('PROTO=TCP') and message.contains('RST'))))]";
+	private String udpLog = "select * from pattern [every (LogEventDev(message.contains('PROTO=UDP')) -> LogEventDev((message.contains('PROTO=UDP'))))]";
 
 	public String getPingStatement() {
 		return pingLog;
@@ -62,7 +64,7 @@ public class TestClass {
 			sb.append("scan detected (-PA -PS)");
 			state = 1;
 			System.out.println(sb.toString());
-			detected = true;
+			icmp = true;
 			firstOccur = LogEventDev1.getTime();
 			System.out.println(firstOccur);
 		}
@@ -74,7 +76,11 @@ public class TestClass {
 	}
 
 	public boolean check() {
-		return detected;
+		if (icmp && tcp && udp) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public int getState() {

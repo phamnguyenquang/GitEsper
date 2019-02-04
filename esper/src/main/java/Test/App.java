@@ -11,10 +11,13 @@ import com.espertech.esper.client.scopetest.SupportSubscriber;
 import Development.LogEventDev;
 import Development.jsonIO;
 import Development.logReaderDev;
+import NmapBeta.PingScan;
+import NmapBeta.SAACKScan;
+import NmapBeta.SSSynScan;
 import NmapCaseDevelopment.NetFilterLogCaller;
 import NmapCaseDevelopment.NetFilterLogParser;
-import NmapCaseDevelopment.PingScan;
 import NmapCaseDevelopment.PortScanDetection;
+import NmapCaseDevelopment.TestClass;
 import legacy.EventA;
 import legacy.EventB;
 
@@ -59,25 +62,42 @@ public class App {
 		EPServiceProvider engine = EPServiceProviderManager.getDefaultProvider();
 		EPAdministrator admin = engine.getEPAdministrator();
 		PingScan lp = new PingScan();
-//
-		admin.getConfiguration().addEventType(NetFilterLogCaller.class);
-		admin.getConfiguration().addEventType(PortScanDetection.class);
-		admin.getConfiguration().addEventType(PingScan.class);
-		admin.getConfiguration().addEventType(LogEventDev.class);
-//
-		SupportSubscriber subscriber = new SupportSubscriber();
+		SSSynScan sS = new SSSynScan();
+		SAACKScan sA = new SAACKScan();
 
 //
-		EPStatement log2Statement = admin.createEPL(lp.getStatement());
-		System.out.println(lp.getStatement());
+		admin.getConfiguration().addEventType(PingScan.class);
+		admin.getConfiguration().addEventType(SSSynScan.class);
+		admin.getConfiguration().addEventType(SAACKScan.class);
+		admin.getConfiguration().addEventType(LogEventDev.class);
 //
-		log2Statement.setSubscriber(lp);
+//
+		EPStatement icmpStatement = admin.createEPL(lp.getStatement());
+		EPStatement sSStatement = admin.createEPL(sS.getStatement());
+		EPStatement sAStatement = admin.createEPL(sA.getStatement());
+		System.out.println(lp.getStatement());
+		System.out.println(sS.getStatement());
+		System.out.println(sA.getStatement());
+
+//
+		icmpStatement.setSubscriber(lp);
+		sSStatement.setSubscriber(sS);
+		sAStatement.setSubscriber(sA);
 
 		for (int i1 = 0; i1 < size1; ++i1) {
 			engine.getEPRuntime().sendEvent(new LogEventDev(jlog, i1));
-			if (lp.check() == true) {
-				break;
+		}
+		System.out.println("ping " + lp.getTotalOccur());
+		System.out.println("sS " + sS.getTotalOccur());
+		System.out.println("sA " + sA.getTotalOccur());
+		if ((lp.getFristOccur() != 0) && (lp.getFristOccur() < sS.getFristOccur())) {
+			if (sA.getTotalOccur() > sS.getTotalOccur()) {
+				System.out.println("possible scan with nmap (-sA)");
+			} else {
+				System.out.println("possible scan with nmap (-sS)");
 			}
+		} else {
+			System.out.println("possible scan with nmap (-PS)");
 		}
 
 	}
