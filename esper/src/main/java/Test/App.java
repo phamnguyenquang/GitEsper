@@ -11,6 +11,7 @@ import com.espertech.esper.client.scopetest.SupportSubscriber;
 import Development.LogEventDev;
 import Development.jsonIO;
 import Development.logReaderDev;
+import NmapBeta.AckScanEventSubcriber;
 import NmapBeta.PingScan;
 import NmapBeta.SAACKScan;
 import NmapBeta.SSSynScan;
@@ -64,41 +65,44 @@ public class App {
 		PingScan lp = new PingScan();
 		SSSynScan sS = new SSSynScan();
 		SAACKScan sA = new SAACKScan();
+		AckScanEventSubcriber ack = new AckScanEventSubcriber();
 
 //
 		admin.getConfiguration().addEventType(PingScan.class);
 		admin.getConfiguration().addEventType(SSSynScan.class);
 		admin.getConfiguration().addEventType(SAACKScan.class);
 		admin.getConfiguration().addEventType(LogEventDev.class);
+		admin.getConfiguration().addEventType(AckScanEventSubcriber.class);
+		
 //
 //
 		EPStatement icmpStatement = admin.createEPL(lp.getStatement());
 		EPStatement sSStatement = admin.createEPL(sS.getStatement());
 		EPStatement sAStatement = admin.createEPL(sA.getStatement());
-		System.out.println(lp.getStatement());
-		System.out.println(sS.getStatement());
-		System.out.println(sA.getStatement());
+		EPStatement AckStatement = admin.createEPL(ack.getStatement());
 
 //
-		icmpStatement.setSubscriber(lp);
-		sSStatement.setSubscriber(sS);
-		sAStatement.setSubscriber(sA);
+//		icmpStatement.setSubscriber(lp);
+//		sSStatement.setSubscriber(sS);
+//		sAStatement.setSubscriber(sA);
 
+		AckStatement.setSubscriber(ack);
+		
 		for (int i1 = 0; i1 < size1; ++i1) {
 			engine.getEPRuntime().sendEvent(new LogEventDev(jlog, i1));
 		}
-		System.out.println("ping " + lp.getTotalOccur());
-		System.out.println("sS " + sS.getTotalOccur());
-		System.out.println("sA " + sA.getTotalOccur());
-		if ((lp.getFristOccur() != 0) && (lp.getFristOccur() < sS.getFristOccur())) {
-			if (sA.getTotalOccur() > sS.getTotalOccur()) {
-				System.out.println("possible scan with nmap (-sA)");
-			} else {
-				System.out.println("possible scan with nmap (-sS)");
-			}
-		} else {
-			System.out.println("possible scan with nmap (-PS)");
-		}
+//		System.out.println("ping " + lp.getTotalOccur());
+//		System.out.println("sS " + sS.getTotalOccur());
+//		System.out.println("sA " + sA.getTotalOccur());
+//		if ((lp.getFristOccur() != 0) && (lp.getFristOccur() < sS.getFristOccur())) {
+//			if (sA.getTotalOccur() > sS.getTotalOccur()) {
+//				System.out.println("possible scan with nmap (-sA)");
+//			} else {
+//				System.out.println("possible scan with nmap (-sS)");
+//			}
+//		} else {
+//			System.out.println("possible scan with nmap (-PS)");
+//		}
 
 	}
 }
