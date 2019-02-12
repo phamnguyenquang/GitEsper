@@ -68,4 +68,8 @@ public class LogMessageExtractor {
 		Flag = flag;
 	}
 
+	public String getMessage() {
+		return message;
+	}
+
 }

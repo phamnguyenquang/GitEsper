@@ -28,7 +28,7 @@ public class logReaderDev {
 
 	private void setupEvent() {
 		for (int i = 0; i < Messages.size(); ++i) {
-			if (Messages.get(i).contains("NetFilter")) {
+			if (Messages.get(i).contains("netFilter")) {
 				message = Messages.get(i);
 				SrcIp = message.substring(message.indexOf("SRC="), message.indexOf(" ", message.indexOf("SRC=")))
 						.replace("SRC=", "");

@@ -7,12 +7,13 @@ import Development.LogEventDev;
 
 import java.util.Map;
 
-public class AckScanEventSubcriber {
+public class SynScanEventSubcriber {
 
 	/**
 	 * Logger
 	 */
-	private static Logger LOG = LoggerFactory.getLogger(AckScanEventSubcriber.class);
+	private static Logger LOG = LoggerFactory.getLogger(SynScanEventSubcriber.class);
+	private int count = 0;
 
 	/**
 	 * {@inheritDoc}
@@ -25,19 +26,15 @@ public class AckScanEventSubcriber {
 
 		// every at the top is messed up, put it in the first event so that it triggers
 		// at every SYN; if put as wrapper of the pattern it will ignore everything
-		String SynScanEventExpression = "select EventA, EventB, EventC " + "from pattern [ "
+		String SynScanEventExpression = "select EventA, EventB " + "from pattern [ "
 				+ "              every EventA = LogEventDev(proto = 'TCP' and flag = ' SYN ')                "
-				+ "                 -> EventB = LogEventDev(proto = 'TCP' and flag = ' ACK SYN '              "
+				+ "                 -> EventB = LogEventDev((proto = 'TCP' and flag = ' ACK RST '              "
 				+ "                                                       and srcPt = EventA.dstPt    		  "
 				+ "                                                        and dstPt = EventA.srcPt     	   "
 				+ "                                                         and srcIP = EventA.destIP            "
-				+ "                                                          and destIP = EventA.srcIP	)        "
-				+ "                 -> EventC = LogEventDev(proto = 'TCP' and flag = ' RST '               	 "
-				+ "                                                       and srcPt = EventB.dstPt   	      "
-				+ "                                                        and dstPt = EventB.srcPt     	   "
-				+ "                                                         and srcIP = EventB.destIP            "
-				+ "                                                          and destIP = EventB.srcIP	)        "
-				+ "             ]";
+				+ "                                                          and destIP = EventA.srcIP) "
+				+ "or(proto='TCP' and flag=' ACK SYN ' " + "and srcPt = EventA.dstPt " + "and dstPt = EventA.srcPt "
+				+ "and srcIP = EventA.destIP " + "and destIP = EventA.srcIP)" + "	)        " + "             ]";
 
 		return SynScanEventExpression;
 	}
@@ -52,16 +49,16 @@ public class AckScanEventSubcriber {
 		// Event B
 		LogEventDev EventB = (LogEventDev) eventMap.get("EventB");
 		// Event C
-		LogEventDev EventC = (LogEventDev) eventMap.get("EventC");
-
+		count+=1;
+//		System.out.println(count);
 		StringBuilder sb = new StringBuilder();
 		sb.append("--------------------------------------------------");
-		sb.append("\n- SYN Scan detected " + EventA + "," + EventB + "," + EventC);
+		sb.append("\n- SYN Scan detected " + EventA + "," + EventB + ",");
 		sb.append("\n- SYN Scan detected " + EventA.getMessage());
 		sb.append("\n- SYN Scan detected " + EventB.getMessage());
-		sb.append("\n- SYN Scan detected " + EventC.getMessage());
 		sb.append("\n--------------------------------------------------");
 
 		System.out.println(sb.toString());
+
 	}
 }

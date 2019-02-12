@@ -13,14 +13,15 @@ public class LogEventDev {
 	
 
 	public LogEventDev(logReaderDev reader, int i) {
-		message = reader.MessageAt(i);
+		
 		Time = Double.parseDouble(reader.getTimeStampAt(i));
 		event = reader.getEventAt(i);
+		message = event.getMessage();
 		srcIP=event.getSrcIp();
 		desIp=event.getDesIp();
 		srcPt=event.getScrPt();
-		dstPt=event.getDstPt();
-		flag=event.getFlag();
+		dstPt = event.getDstPt();
+		flag = event.getFlag();
 		Proto=event.getProto();
 	}
 
