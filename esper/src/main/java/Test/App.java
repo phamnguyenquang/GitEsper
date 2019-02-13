@@ -12,6 +12,7 @@ import Development.LogEventDev;
 import Development.jsonIO;
 import Development.logReaderDev;
 import NmapBeta.SynScanEventSubcriber;
+import NmapBeta.SynScanEventSubscriberWithACK;
 import NmapBeta.UdpScanEventSubscriber;
 import NmapBeta.AckScanEventSubscriber;
 import NmapBeta.PingScan;
@@ -44,6 +45,7 @@ public class App {
 		EPAdministrator admin = engine.getEPAdministrator();
 		
 		SynScanEventSubcriber syn = new SynScanEventSubcriber();
+		SynScanEventSubscriberWithACK synA= new SynScanEventSubscriberWithACK();
 		AckScanEventSubscriber ack = new AckScanEventSubscriber();
 		UdpScanEventSubscriber udp = new UdpScanEventSubscriber();
 
@@ -51,12 +53,16 @@ public class App {
 		admin.getConfiguration().addEventType(SynScanEventSubcriber.class);
 		admin.getConfiguration().addEventType(AckScanEventSubscriber.class);
 		admin.getConfiguration().addEventType(UdpScanEventSubscriber.class);
+		admin.getConfiguration().addEventType(SynScanEventSubscriberWithACK.class);
+
 
 		EPStatement synStatement = admin.createEPL(syn.getStatement());
 		EPStatement AckStatement = admin.createEPL(ack.getStatement());
 		EPStatement UDPStatement = admin.createEPL(udp.getStatement());
+		EPStatement synAStatement = admin.createEPL(synA.getStatement());
 
 		synStatement.setSubscriber(syn);
+		synAStatement.setSubscriber(synA);
 		AckStatement.setSubscriber(ack);
 		UDPStatement.setSubscriber(udp);
 		

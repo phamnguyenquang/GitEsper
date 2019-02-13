@@ -33,8 +33,8 @@ public class SynScanEventSubcriber {
 				+ "                                                        and dstPt = EventA.srcPt     	   "
 				+ "                                                         and srcIP = EventA.destIP            "
 				+ "                                                          and destIP = EventA.srcIP) "
-				+ "or(proto='TCP' and flag=' ACK SYN ' " + "and srcPt = EventA.dstPt " + "and dstPt = EventA.srcPt "
-				+ "and srcIP = EventA.destIP " + "and destIP = EventA.srcIP)" + "	)        " + "             ]";
+				+ "	)        " 
+				+ "             ]";
 
 		return SynScanEventExpression;
 	}
