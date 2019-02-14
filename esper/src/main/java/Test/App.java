@@ -48,7 +48,22 @@ public class App {
 		SynScanEventSubscriberWithACK synA= new SynScanEventSubscriberWithACK();
 		AckScanEventSubscriber ack = new AckScanEventSubscriber();
 		UdpScanEventSubscriber udp = new UdpScanEventSubscriber();
+		
+		String createSchemaSyn = "create schema syn_scan as(srcIP string, dstIP string, srcPt string, dstPt string, Proto string, flag string) ";
+		String createSchemaClosedPort ="create schema closed_port as(srcIP string, dstIP string, srcPt string, dstPt string, Proto string, flag string) ";
+		
+		String insertSyn = "insert into syn_scan select srcIP "
+				+ "from pattern [ "
+				+ "              every EventA = LogEventDev(proto = 'TCP' and flag = ' SYN ')                "
+				+ "                 -> EventB = LogEventDev((proto = 'TCP' and flag = ' ACK RST '              "
+				+ "                                                       and srcPt = EventA.dstPt    		  "
+				+ "                                                        and dstPt = EventA.srcPt     	   "
+				+ "                                                         and srcIP = EventA.destIP            "
+				+ "                                                          and destIP = EventA.srcIP) "
+				+ "	)        " 
+				+ "             ]";
 
+		
 		admin.getConfiguration().addEventType(LogEventDev.class);
 		admin.getConfiguration().addEventType(SynScanEventSubcriber.class);
 		admin.getConfiguration().addEventType(AckScanEventSubscriber.class);
@@ -56,16 +71,29 @@ public class App {
 		admin.getConfiguration().addEventType(SynScanEventSubscriberWithACK.class);
 
 
+		EPStatement schemasyn = admin.createEPL(createSchemaSyn);
+		EPStatement schemaclosed = admin.createEPL(createSchemaClosedPort);
+		EPStatement insertsyn = admin.createEPL(insertSyn);
 		EPStatement synStatement = admin.createEPL(syn.getStatement());
 		EPStatement AckStatement = admin.createEPL(ack.getStatement());
 		EPStatement UDPStatement = admin.createEPL(udp.getStatement());
 		EPStatement synAStatement = admin.createEPL(synA.getStatement());
 
-		synStatement.setSubscriber(syn);
-		synAStatement.setSubscriber(synA);
-		AckStatement.setSubscriber(ack);
-		UDPStatement.setSubscriber(udp);
+//		synStatement.setSubscriber(syn);
+//		synAStatement.setSubscriber(synA);
+//		AckStatement.setSubscriber(ack);
+//		UDPStatement.setSubscriber(udp);
 		
+		
+		insertsyn.addListener((newData, oldData) -> {
+			String srcIP = (String) newData[0].get("srcIP");
+			String dstP = (String) newData[0].get("destIP");
+			String srcPt = (String) newData[0].get("srcPt");
+			String dstPt = (String) newData[0].get("dstPt");
+			String Proto = (String) newData[0].get("Proto");
+			System.out.println("srcIP");
+		});
+
 		for (int i1 = 0; i1 < size1; ++i1) {
 			engine.getEPRuntime().sendEvent(new LogEventDev(jlog, i1));
 		}
