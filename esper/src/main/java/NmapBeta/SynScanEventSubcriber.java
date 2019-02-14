@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import Development.LogEventDev;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class SynScanEventSubcriber {
@@ -14,6 +15,8 @@ public class SynScanEventSubcriber {
 	 */
 	private static Logger LOG = LoggerFactory.getLogger(SynScanEventSubcriber.class);
 	private int count = 0;
+	private String test = "insert into syn_ack select EventA.srcIP, EventA.destIP, EventA.srcPt, EventA.dstPt, EventA.proto, EventA.flag";
+	private ArrayList<LogEventDev>eventSeries = new ArrayList<LogEventDev>();
 
 	/**
 	 * {@inheritDoc}
@@ -26,17 +29,18 @@ public class SynScanEventSubcriber {
 
 		// every at the top is messed up, put it in the first event so that it triggers
 		// at every SYN; if put as wrapper of the pattern it will ignore everything
-		String SynScanEventExpression = "select EventA, EventB " + "from pattern [ "
+		String SynScanEventExpression = "select EventA, EventB " 
+				+ "from pattern [ "
 				+ "              every EventA = LogEventDev(proto = 'TCP' and flag = ' SYN ')                "
 				+ "                 -> EventB = LogEventDev((proto = 'TCP' and flag = ' ACK RST '              "
 				+ "                                                       and srcPt = EventA.dstPt    		  "
 				+ "                                                        and dstPt = EventA.srcPt     	   "
 				+ "                                                         and srcIP = EventA.destIP            "
 				+ "                                                          and destIP = EventA.srcIP) "
-				+ "	)        " 
-				+ "             ]";
+				+ "	)        " + "             ]";
 
 		return SynScanEventExpression;
+
 	}
 
 	/**
@@ -49,7 +53,7 @@ public class SynScanEventSubcriber {
 		// Event B
 		LogEventDev EventB = (LogEventDev) eventMap.get("EventB");
 		// Event C
-		count+=1;
+		count += 1;
 //		System.out.println(count);
 		StringBuilder sb = new StringBuilder();
 		sb.append("--------------------------------------------------");
@@ -59,6 +63,13 @@ public class SynScanEventSubcriber {
 		sb.append("\n--------------------------------------------------");
 
 		System.out.println(sb.toString());
+		eventSeries.add(EventA);
 
 	}
+
+	public ArrayList<LogEventDev> getOccuredEvent() {
+		return eventSeries;
+	}
+
+
 }

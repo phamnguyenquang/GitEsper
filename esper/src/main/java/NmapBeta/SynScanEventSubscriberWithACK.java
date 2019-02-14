@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import Development.LogEventDev;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class SynScanEventSubscriberWithACK{
@@ -19,6 +20,7 @@ public class SynScanEventSubscriberWithACK{
      * If 2 consecutive temperature events are greater than this - issue a warning
      */
     private static final String WARNING_EVENT_THRESHOLD = "400";
+    private ArrayList<LogEventDev>eventSeries = new ArrayList<LogEventDev>();
 
 
     /**
@@ -69,5 +71,9 @@ public class SynScanEventSubscriberWithACK{
         sb.append("\n--------------------------------------------------");
 
        System.out.println(sb.toString());
+       eventSeries.add(EventA);
     }
+	public ArrayList<LogEventDev> getOccuredEvent() {
+		return eventSeries;
+	}
 }

@@ -45,22 +45,27 @@ public class Application extends Thread {
 		EPStatement schemaInsertStatement3 = engine.getEPAdministrator().createEPL(schemaInsertFromC);
 		EPStatement schemaInsertStatement4 = engine.getEPAdministrator().createEPL(sequentialInsert);
 		
-//		schemaInsertStatement1.addListener((newData, oldData) -> {
-//			int property = (int) newData[0].get("property");
-////			int count = (int)newData[0].get("count(*)");
-//			System.out.println("Event A " + property);
-//		});
-//		schemaInsertStatement2.addListener((newData, oldData) -> {
-//			int property = (int) newData[0].get("property");
-////			int count = (int)newData[0].get("count(*)");
-//			System.out.println("Event B " + property);
-//		});
-//			int property = (int) newData[0].get("property");
-//			System.out.println("Event C " + property);
-//		});
-		schemaInsertStatement4.addListener((newData, oldData) -> {
+		schemaInsertStatement1.addListener((newData, oldData) -> {
+			int property = (int) newData[0].get("property");
+//			int count = (int)newData[0].get("count(*)");
+			System.out.println("Event A " + property);
+		});
+		schemaInsertStatement2.addListener((newData, oldData) -> {
+			int property = (int) newData[0].get("property");
+//			int count = (int)newData[0].get("count(*)");
+			System.out.println("Event B " + property);
+		});
+		schemaInsertStatement1.addListener((newData, oldData) -> {
 			int property = (int) newData[0].get("property");
 			System.out.println("Event C " + property);
+		});
+		schemaInsertStatement4.addListener((newData, oldData) -> {
+			int property = (int) newData[0].get("property");
+			System.out.println("Event D " + property);
+		});
+		schemaInsertStatement3.addListener((newData, oldData) -> {
+			int property = (int) newData[0].get("property");
+			System.out.println("Event C 2 " + property);
 		});
 
 

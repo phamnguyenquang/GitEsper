@@ -1,6 +1,11 @@
-package Development;
+package NmapBeta;
 
-public class LogEventDev {
+import java.util.Map;
+
+import Development.LogEventDev;
+import Development.LogMessageExtractor;
+
+public class SynScanOpenPort {
 	private String message = "";
 	private double Time = 0.0;
 	private LogMessageExtractor event;
@@ -11,20 +16,17 @@ public class LogEventDev {
 	private String flag="";
 	private String Proto="";
 	
-
-	public LogEventDev(logReaderDev reader, int i) {
-		
-		Time = Double.parseDouble(reader.getTimeStampAt(i));
-		event = reader.getEventAt(i);
-		message = event.getMessage();
-		srcIP=event.getSrcIp();
-		destIP=event.getDesIp();
-		srcPt=event.getScrPt();
-		dstPt = event.getDstPt();
-		flag = event.getFlag();
-		Proto=event.getProto();
+	public SynScanOpenPort(LogEventDev ee)
+	{
+		message = ee.getMessage();
+		srcIP =ee.getSrcIP();
+		destIP=ee.getDestIP();
+		srcPt=ee.getSrcPt();
+		dstPt=ee.getDstPt();
+		flag=ee.getFlag();
+		Proto=ee.getProto();
 	}
-
+	
 	public String getMessage() {
 		return message;
 	}
