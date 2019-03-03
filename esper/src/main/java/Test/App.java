@@ -31,9 +31,6 @@ public class App {
 		 * command is executed
 		 */
 
-		logReaderDev jlog = new logReaderDev("/home/quang/journal.log");
-		int size1 = jlog.size();
-
 		EPServiceProvider engine = EPServiceProviderManager.getDefaultProvider();
 		EPAdministrator admin = engine.getEPAdministrator();
 
@@ -43,12 +40,12 @@ public class App {
 		AckScanEventSubscriber ack = new AckScanEventSubscriber();
 		UdpScanEventSubscriber udp = new UdpScanEventSubscriber();
 
-		String createSchemaSyn = "create schema syn_ack as(srcIP string, destIP string, srcPt string, dstPt string, Proto string, flag string) ";
-		String createSchemaClosedPort = "create schema closed_port as(srcIP string, destIP string, srcPt string, dstPt string,flag string) ";
+		String createSchemaSyn = "create table syn_ack as(srcIP string, destIP string, srcPt string, dstPt string, Proto string, flag string) ";
+		String createSchemaClosedPort = "create table closed_port as(srcIP string, destIP string, srcPt string, dstPt string,flag string) ";
 
 		String insertCPStatement = "insert into closed_port (srcIP,destIP, srcPt, dstPt, flag) select srcIP,destIP, srcPt, dstPt, flag from SynScanClosedPort";
 		String insertSAStatement = "insert into syn_ack (srcIP,destIP, srcPt, dstPt, flag) select srcIP,destIP, srcPt, dstPt, flag from SynScanOpenPort";
-		
+
 		String selectSynACk = "select srcIP, destIP, dstPt from syn_ack ";
 		String selectAckRst = "select srcIP, destIP, dstPt from closed_port ";
 
@@ -76,14 +73,14 @@ public class App {
 		synAStatement.setSubscriber(synA);
 		AckStatement.setSubscriber(ack);
 		UDPStatement.setSubscriber(udp);
-	
+
 		insert.addListener((newData, oldData) -> {
 			String srcIP = (String) newData[0].get("srcIP");
 			String destIP = (String) newData[0].get("destIP");
 			String srcPt = (String) newData[0].get("srcPt");
 			String dstPt = (String) newData[0].get("dstPt");
 			String flag = (String) newData[0].get("flag");
-			System.out.println("insert closed port " + srcIP + " "+destIP);
+			System.out.println("insert closed port " + srcIP + " " + destIP);
 		});
 		SAinsert.addListener((newData, oldData) -> {
 			String srcIP = (String) newData[0].get("srcIP");
@@ -91,19 +88,29 @@ public class App {
 			String srcPt = (String) newData[0].get("srcPt");
 			String dstPt = (String) newData[0].get("dstPt");
 			String flag = (String) newData[0].get("flag");
-			System.out.println("insert syn ack " + srcIP+ " "+destIP);
+			System.out.println("insert syn ack " + srcIP + " " + destIP);
 		});
 
-		for (int i1 = 0; i1 < size1; ++i1) {
-			engine.getEPRuntime().sendEvent(new LogEventDev(jlog, i1));
-		}
-		for(int i = 0; i< syn.getOccuredEvent().size();++i)
-		{
-			engine.getEPRuntime().sendEvent(new SynScanOpenPort(syn.getOccuredEvent().get(i)));
-		}
-		for(int i = 0; i< synA.getOccuredEvent().size();++i)
-		{
-			engine.getEPRuntime().sendEvent(new SynScanClosedPort(synA.getOccuredEvent().get(i)));
+		logReaderDev jlog;
+		for (int j = 0; j < 3; ++j) {
+			jlog = new logReaderDev("/home/quang/journal.log");
+			int size1 = jlog.size();
+
+			for (int i1 = 0; i1 < size1; ++i1) {
+				engine.getEPRuntime().sendEvent(new LogEventDev(jlog, i1));
+			}
+			for (int i = 0; i < syn.getOccuredEvent().size(); ++i) {
+				engine.getEPRuntime().sendEvent(new SynScanOpenPort(syn.getOccuredEvent().get(i)));
+			}
+			for (int i = 0; i < synA.getOccuredEvent().size(); ++i) {
+				engine.getEPRuntime().sendEvent(new SynScanClosedPort(synA.getOccuredEvent().get(i)));
+			}
+			try {
+				Thread.sleep(60000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}
