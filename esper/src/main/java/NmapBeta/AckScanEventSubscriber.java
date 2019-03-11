@@ -31,15 +31,17 @@ public class AckScanEventSubscriber {
 
 		// every at the top is messed up, put it in the first event so that it triggers
 		// at every SYN; if put as wrapper of the pattern it will ignore everything
-		String AckScanEventExpression = "select EventA, EventB " + "from pattern [ "
-				+ "              every EventA = LogEventDev(proto = 'TCP' and flag = ' ACK ')                "
-				+ "                 -> EventB = LogEventDev(proto = 'TCP' and flag = ' RST '              "
-				+ "                                                       and srcPt = EventA.dstPt    		  "
-				+ "                                                        and dstPt = EventA.srcPt     	   "
-				+ "                                                         and srcIP = EventA.destIP            "
-				+ "                                                          and destIP = EventA.srcIP	)        "
-				+ "             ]";
-
+        String AckScanEventExpression = "" +
+                "insert into closed_portSyn (A, B, C, srcIP, destIP,srcPt, destPt) " +
+                "select EventA, EventB, EventB, EventA.srcIP as srcIP, EventA.destIP as destIP, EventA.srcPt as srcPt, EventA.dstPt as destPt "
+                + "from pattern [ "
+                + "              every EventA = LogEventDev(proto = 'TCP' and flag = ' ACK ')                "
+                + "                 -> EventB = LogEventDev(proto = 'TCP' and flag = ' RST '              "
+                + "                                                       and srcPt = EventA.dstPt    		  "
+                + "                                                        and dstPt = EventA.srcPt     	   "
+                + "                                                         and srcIP = EventA.destIP            "
+                + "                                                          and destIP = EventA.srcIP	)        "
++ "             ]";
 		return AckScanEventExpression;
 	}
 

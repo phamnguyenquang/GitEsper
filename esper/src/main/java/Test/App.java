@@ -8,15 +8,19 @@ import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.scopetest.SupportSubscriber;
 
+import Background.CommandExecutor;
 import Development.LogEventDev;
 import Development.jsonIO;
 import Development.logReaderDev;
-import NmapBeta.SynScanEventSubcriber;
-import NmapBeta.SynScanEventSubscriberWithACK;
 import NmapBeta.UdpScanEventSubscriber;
 import NmapBeta.AckScanEventSubscriber;
+import NmapBeta.ClosedPortCounterSubscriber;
+import NmapBeta.HorizontalScanCounterSubscriber;
 import NmapBeta.PingScan;
+import NmapBeta.PortSpikeHorizontalSubscriber;
 import NmapBeta.SynScanClosedPort;
+import NmapBeta.SynScanClosedPortEventSubscriber;
+import NmapBeta.SynScanEventSubscriber;
 import NmapBeta.SynScanOpenPort;
 import legacy.EventA;
 import legacy.EventB;
@@ -31,79 +35,61 @@ public class App {
 		 * command is executed
 		 */
 
+		CommandExecutor cmd = new CommandExecutor();
+		cmd.startCommand("whoami");
+		String user = cmd.getResult();
+		
 		EPServiceProvider engine = EPServiceProviderManager.getDefaultProvider();
 		EPAdministrator admin = engine.getEPAdministrator();
 
-		ArrayList<SynScanOpenPort> chainScan = new ArrayList<SynScanOpenPort>();
-		SynScanEventSubcriber syn = new SynScanEventSubcriber();
-		SynScanEventSubscriberWithACK synA = new SynScanEventSubscriberWithACK();
 		AckScanEventSubscriber ack = new AckScanEventSubscriber();
+		ClosedPortCounterSubscriber closedP = new ClosedPortCounterSubscriber();
+		HorizontalScanCounterSubscriber horz = new HorizontalScanCounterSubscriber();
 		UdpScanEventSubscriber udp = new UdpScanEventSubscriber();
+		PortSpikeHorizontalSubscriber portS = new PortSpikeHorizontalSubscriber();
+		SynScanClosedPortEventSubscriber synC = new SynScanClosedPortEventSubscriber();
+		SynScanEventSubscriber synS = new SynScanEventSubscriber();
 
-		String createSchemaSyn = "create table syn_ack as(srcIP string, destIP string, srcPt string, dstPt string, Proto string, flag string) ";
-		String createSchemaClosedPort = "create table closed_port as(srcIP string, destIP string, srcPt string, dstPt string,flag string) ";
 
-		String insertCPStatement = "insert into closed_port (srcIP,destIP, srcPt, dstPt, flag) select srcIP,destIP, srcPt, dstPt, flag from SynScanClosedPort";
-		String insertSAStatement = "insert into syn_ack (srcIP,destIP, srcPt, dstPt, flag) select srcIP,destIP, srcPt, dstPt, flag from SynScanOpenPort";
-
-		String selectSynACk = "select srcIP, destIP, dstPt from syn_ack ";
-		String selectAckRst = "select srcIP, destIP, dstPt from closed_port ";
 
 		admin.getConfiguration().addEventType(LogEventDev.class);
-		admin.getConfiguration().addEventType(SynScanEventSubcriber.class);
+		admin.getConfiguration().addEventType(ClosedPortCounterSubscriber.class);
 		admin.getConfiguration().addEventType(AckScanEventSubscriber.class);
 		admin.getConfiguration().addEventType(UdpScanEventSubscriber.class);
-		admin.getConfiguration().addEventType(SynScanEventSubscriberWithACK.class);
-		admin.getConfiguration().addEventType(SynScanOpenPort.class);
-		admin.getConfiguration().addEventType(SynScanClosedPort.class);
+		admin.getConfiguration().addEventType(HorizontalScanCounterSubscriber.class);
+		admin.getConfiguration().addEventType(PortSpikeHorizontalSubscriber.class);
+		admin.getConfiguration().addEventType(SynScanClosedPortEventSubscriber.class);
+		admin.getConfiguration().addEventType(SynScanEventSubscriber.class);
 
-		admin.createEPL(createSchemaSyn);
-		admin.createEPL(createSchemaClosedPort);
-		EPStatement selectsyn = admin.createEPL(selectSynACk);
-		EPStatement selectackrst = admin.createEPL(selectAckRst);
-		EPStatement synStatement = admin.createEPL(syn.getStatement());
+
+
 		EPStatement AckStatement = admin.createEPL(ack.getStatement());
+		EPStatement ClosedPortStatement = admin.createEPL(closedP.getStatement());
+		EPStatement HorizontalScanStatement = admin.createEPL(horz.getStatement());
 		EPStatement UDPStatement = admin.createEPL(udp.getStatement());
-		EPStatement synAStatement = admin.createEPL(synA.getStatement());
-		EPStatement insert = admin.createEPL(insertCPStatement);
-		EPStatement SAinsert = admin.createEPL(insertSAStatement);
-		EPStatement select1 = admin.createEPL(selectSynACk);
+		EPStatement PortSpikeStatement = admin.createEPL(portS.getStatement());
+		EPStatement SynClosedStatement = admin.createEPL(synC.getStatement());
+		EPStatement SynScanStatement = admin.createEPL(synS.getStatement());
 
-		synStatement.setSubscriber(syn);
-		synAStatement.setSubscriber(synA);
+
+
+
 		AckStatement.setSubscriber(ack);
+		ClosedPortStatement.setSubscriber(closedP);
+		HorizontalScanStatement.setSubscriber(horz);
 		UDPStatement.setSubscriber(udp);
+		PortSpikeStatement.setSubscriber(portS);
+		SynClosedStatement.setSubscriber(synC);
+		SynScanStatement.setSubscriber(synS);
 
-		insert.addListener((newData, oldData) -> {
-			String srcIP = (String) newData[0].get("srcIP");
-			String destIP = (String) newData[0].get("destIP");
-			String srcPt = (String) newData[0].get("srcPt");
-			String dstPt = (String) newData[0].get("dstPt");
-			String flag = (String) newData[0].get("flag");
-			System.out.println("insert closed port " + srcIP + " " + destIP);
-		});
-		SAinsert.addListener((newData, oldData) -> {
-			String srcIP = (String) newData[0].get("srcIP");
-			String destIP = (String) newData[0].get("destIP");
-			String srcPt = (String) newData[0].get("srcPt");
-			String dstPt = (String) newData[0].get("dstPt");
-			String flag = (String) newData[0].get("flag");
-			System.out.println("insert syn ack " + srcIP + " " + destIP);
-		});
 
 		logReaderDev jlog;
 		for (int j = 0; j < 3; ++j) {
-			jlog = new logReaderDev("/home/quang/journal.log");
+			jlog = new logReaderDev("/home/"+user+"/journal.log");
 			int size1 = jlog.size();
 
 			for (int i1 = 0; i1 < size1; ++i1) {
 				engine.getEPRuntime().sendEvent(new LogEventDev(jlog, i1));
-			}
-			for (int i = 0; i < syn.getOccuredEvent().size(); ++i) {
-				engine.getEPRuntime().sendEvent(new SynScanOpenPort(syn.getOccuredEvent().get(i)));
-			}
-			for (int i = 0; i < synA.getOccuredEvent().size(); ++i) {
-				engine.getEPRuntime().sendEvent(new SynScanClosedPort(synA.getOccuredEvent().get(i)));
 			}
 			try {
 				Thread.sleep(60000);
