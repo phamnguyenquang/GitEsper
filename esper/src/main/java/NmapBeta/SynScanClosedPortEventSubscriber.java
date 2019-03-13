@@ -48,6 +48,6 @@ public class SynScanClosedPortEventSubscriber{
         sb.append("\n- ACK Scan detected " + EventB.getMessage() );
         sb.append("\n--------------------------------------------------");
 
-        System.out.println(sb.toString());
+//        System.out.println(sb.toString());
     }
 }

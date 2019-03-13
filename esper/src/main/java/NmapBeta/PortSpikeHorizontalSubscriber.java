@@ -2,6 +2,8 @@ package NmapBeta;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 import java.util.Map;
 
 
@@ -9,8 +11,8 @@ import java.util.Map;
 public class PortSpikeHorizontalSubscriber {
 
     /** Logger */
-
-
+	private ArrayList<String>IPAddress= new ArrayList<String>();
+	private ArrayList<String>Port=new ArrayList<String>();
     /**
      * {@inheritDoc}
      */
@@ -19,8 +21,6 @@ public class PortSpikeHorizontalSubscriber {
         // Example of simple EPL with a Time Window
         return " select destPt, destIP from VerticalScan.win:length_batch(10) " +
                 " group by destPt having count(destPt) >= 2 ";
-
-
     }
 
     /**
@@ -38,6 +38,18 @@ public class PortSpikeHorizontalSubscriber {
         sb.append("\n- [MONITOR] destIP " + destIP);
         sb.append("\n---------------------------------");
 
-        System.out.println(sb.toString());
+//       System.out.println(sb.toString());
+        IPAddress.add(destIP);
+        Port.add(destPt);
+    }
+    
+    public void print()
+    {
+    	System.out.println("Horizontal Scan details");
+    	System.out.println("Target in form IP:port");
+    	for(int i = 0; i<IPAddress.size();++i)
+    	{
+    		System.out.println(IPAddress.get(i) +": "+ Port.get(i));
+    	}
     }
 }

@@ -62,6 +62,6 @@ public class AckScanEventSubscriber {
 		sb.append("\n- ACK Scan detected EventB " + EventB.getMessage());
 		sb.append("\n--------------------------------------------------");
 
-		System.out.println(sb.toString());
+//		System.out.println(sb.toString());
 	}
 }

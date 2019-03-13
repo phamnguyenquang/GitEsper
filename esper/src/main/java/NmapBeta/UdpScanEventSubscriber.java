@@ -44,6 +44,6 @@ public class UdpScanEventSubscriber {
 		sb.append("\n- UDP Scan detected " + EventB.getMessage());
 		sb.append("\n--------------------------------------------------");
 
-		System.out.println(sb.toString());
+//		System.out.println(sb.toString());
 	}
 }

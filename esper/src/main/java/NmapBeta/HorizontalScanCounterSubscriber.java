@@ -3,16 +3,13 @@ package NmapBeta;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 import java.util.Map;
 
 public class HorizontalScanCounterSubscriber{
 
-    /** Logger */
-
-
-    /**
-     * {@inheritDoc}
-     */
+	private ArrayList<String>Port=new ArrayList<String>();
     public String getStatement() {
 
         // Example of simple EPL with a Time Window
@@ -31,7 +28,14 @@ public class HorizontalScanCounterSubscriber{
         sb.append("---------------------------------");
         sb.append("\n- [MONITOR] DestPort " + destPt);
         sb.append("\n---------------------------------");
-
-        System.out.println(sb.toString());
+        Port.add(destPt);
+//        System.out.println(sb.toString());
+    }
+    public void print() {
+    	System.out.println("Vertical Scan Details");
+    	System.out.println("Port List");
+    	for(int i=0;i<Port.size();++i) {
+    		System.out.println(Port.get(i));
+    	}
     }
 }

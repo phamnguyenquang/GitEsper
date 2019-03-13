@@ -2,12 +2,13 @@ package NmapBeta;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 import java.util.Map;
 
 public class ClosedPortCounterSubscriber {
 
     /** Logger */
-
     /**
      * {@inheritDoc}
      */
@@ -25,11 +26,13 @@ public class ClosedPortCounterSubscriber {
 
         // count when there are distinct value
         Long val = (Long) eventMap.get("val");
-
+        Long test=(Long)eventMap.get("destPt");
         StringBuilder sb = new StringBuilder();
         sb.append("---------------------------------");
         sb.append("\n- [MONITOR] COUNT " + val);
         sb.append("\n---------------------------------");
-        System.out.println(sb.toString());
+//        System.out.println(sb.toString());
+        System.out.println(test);
+
     }
 }

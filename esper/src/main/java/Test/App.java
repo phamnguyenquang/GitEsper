@@ -18,10 +18,8 @@ import NmapBeta.ClosedPortCounterSubscriber;
 import NmapBeta.HorizontalScanCounterSubscriber;
 import NmapBeta.PingScan;
 import NmapBeta.PortSpikeHorizontalSubscriber;
-import NmapBeta.SynScanClosedPort;
 import NmapBeta.SynScanClosedPortEventSubscriber;
 import NmapBeta.SynScanEventSubscriber;
-import NmapBeta.SynScanOpenPort;
 import legacy.EventA;
 import legacy.EventB;
 
@@ -84,13 +82,15 @@ public class App {
 
 
 		logReaderDev jlog;
-		for (int j = 0; j < 3; ++j) {
+		for (int j = 0; j < 1; ++j) {
 			jlog = new logReaderDev("/home/"+user+"/journal.log");
 			int size1 = jlog.size();
 
 			for (int i1 = 0; i1 < size1; ++i1) {
 				engine.getEPRuntime().sendEvent(new LogEventDev(jlog, i1));
 			}
+			
+			
 			try {
 				Thread.sleep(60000);
 			} catch (InterruptedException e) {
@@ -98,6 +98,8 @@ public class App {
 				e.printStackTrace();
 			}
 		}
+		horz.print();
+		portS.print();
 
 	}
 }

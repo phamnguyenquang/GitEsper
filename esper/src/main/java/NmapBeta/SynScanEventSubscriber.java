@@ -54,6 +54,6 @@ public class SynScanEventSubscriber  {
         sb.append("\n- SYN Scan detected " + EventC.getMessage() );
         sb.append("\n--------------------------------------------------");
 
-       System.out.println(sb.toString());
+//       System.out.println(sb.toString());
     }
 }
