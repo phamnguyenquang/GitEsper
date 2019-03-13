@@ -32,7 +32,7 @@ public class jsonIO {
 		try {
 			cmd.startCommand("rm " + path);
 //			cmd.startCommand("sudo journalctl -b -o json-pretty > " + path);
-			cmd.startCommand("sudo journalctl --since '1 minutes ago' -o json-pretty > " + path);
+			cmd.startCommand("sudo journalctl --since '3 minutes ago' -o json-pretty > " + path);
 			cmd.startCommand("sudo chmod 777 " + path);
 			InputStream jis = new FileInputStream(path);
 			Reader r = new InputStreamReader(jis, "UTF-8");
