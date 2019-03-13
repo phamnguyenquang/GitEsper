@@ -15,7 +15,7 @@ public class ClosedPortCounterSubscriber {
     public String getStatement() {
 
         // Example of simple EPL with a Time Window
-        return "select count(distinct destPt) as val from closed_portSyn.win:length(30) "
+        return "select count(distinct destPt) as val, srcIP from closed_portSyn.win:length(30) "
                 + "group by destIP, srcIP ";
     }
 

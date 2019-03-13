@@ -13,7 +13,7 @@ public class HorizontalScanCounterSubscriber{
     public String getStatement() {
 
         // Example of simple EPL with a Time Window
-        return " insert into VerticalScan(destPt,destIP) select destPt as desPt, destIP as destIp from closed_portSyn.win:keepall() ";
+        return " insert into VerticalScan(destPt,destIP,srcIP) select destPt as desPt, destIP as destI, srcIP as srcIP from closed_portSyn.win:keepall() ";
     }
 
     /**
