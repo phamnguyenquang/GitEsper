@@ -20,7 +20,7 @@ public class PortSpikeHorizontalSubscriber {
     public String getStatement() {
 
         // Example of simple EPL with a Time Window
-        return " select destPt, destIP, srcIP from VerticalScan.win:length_batch(10) " +
+        return " select destPt, destIP, srcIP from HorizontalScan.win:length_batch(10) " +
                 " group by destPt having count(destPt) >= 2 ";
     }
 

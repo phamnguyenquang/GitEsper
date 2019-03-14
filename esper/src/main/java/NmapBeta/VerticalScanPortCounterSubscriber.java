@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class ClosedPortCounterSubscriber {
+public class VerticalScanPortCounterSubscriber {
 
 	private ArrayList<String> Port = new ArrayList<String>();
 	private ArrayList<String> srcIPList = new ArrayList<String>();
@@ -14,7 +14,7 @@ public class ClosedPortCounterSubscriber {
 	public String getStatement() {
 
 		// Example of simple EPL with a Time Window
-		return "select count(distinct destPt) as val,destPt, srcIP from closed_portSyn.win:length(30) "
+		return "select count(distinct destPt) as val,destPt, srcIP from PortScan.win:length(30) "
 				+ "group by destIP, srcIP ";
 	}
 

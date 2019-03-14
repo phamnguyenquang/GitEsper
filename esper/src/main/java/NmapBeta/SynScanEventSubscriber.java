@@ -15,7 +15,7 @@ public class SynScanEventSubscriber  {
         //return "select avg(temperature) as avg_val from TemperatureEvent.win:time_batch(5 sec)";
 
         //every at the top is messed up, put it in the first event so that it triggers at every SYN; if put as wrapper of the pattern it will ignore everything
-        String SynScanEventExpression = "insert into closed_portSyn (A, B, C, srcIP, destIP,srcPt, destPt)"
+        String SynScanEventExpression = "insert into PortScan (A, B, C, srcIP, destIP,srcPt, destPt)"
                 + " select EventA, EventB, EventC, EventA.srcIP as srcIP, EventA.destIP as destIP, EventA.srcPt as srcPt, EventA.dstPt as destPt "
                 + " from pattern [ "
                 + "              every EventA = LogEventDev(proto = 'TCP' and flag = ' SYN ')                "

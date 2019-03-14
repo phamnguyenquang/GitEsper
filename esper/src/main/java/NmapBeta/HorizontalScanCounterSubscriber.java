@@ -13,7 +13,7 @@ public class HorizontalScanCounterSubscriber{
     public String getStatement() {
 
         // Example of simple EPL with a Time Window
-        return " insert into VerticalScan(destPt,destIP,srcIP) select destPt as desPt, destIP as destI, srcIP as srcIP from closed_portSyn.win:keepall() ";
+        return " insert into HorizontalScan(destPt,destIP,srcIP) select destPt as desPt, destIP as destI, srcIP as srcIP from PortScan.win:keepall() ";
     }
 
     /**
@@ -30,12 +30,5 @@ public class HorizontalScanCounterSubscriber{
         sb.append("\n---------------------------------");
         Port.add(destPt);
 //        System.out.println(sb.toString());
-    }
-    public void print() {
-    	System.out.println("Vertical Scan Details");
-    	System.out.println("Port List");
-    	for(int i=0;i<Port.size();++i) {
-    		System.out.println(Port.get(i));
-    	}
     }
 }

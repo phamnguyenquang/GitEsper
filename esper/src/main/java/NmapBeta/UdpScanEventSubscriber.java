@@ -18,11 +18,14 @@ public class UdpScanEventSubscriber {
 
 		// every at the top is messed up, put it in the first event so that it triggers
 		// at every SYN; if put as wrapper of the pattern it will ignore everything
-		String UdpScanEventExpression = "select EventA, EventB " + "from pattern [ "
+		String UdpScanEventExpression ="insert into PortScan (A, B, srcIP, destIP,srcPt, destPt) "+ 
+				"select EventA, EventB " + "from pattern [ "
 				+ "              every EventA = LogEventDev(proto = 'UDP')                "
 				+ "                 -> EventB = LogEventDev(proto = 'ICMP'                "
-				+ "                                        and srcIP = EventA.destIP       "
-				+ "                                        and destIP = EventA.srcIP	)      " + "             ]";
+				+ "                                        and srcIP = EventA.destIP      "
+				+ "                                        and destIP = EventA.srcIP	  "
+				+ "										   and srcPt = EventA.dstPt		  "
+				+ " 									   and dstPt = EventA.srcPt )      " + "             ]";
 
 		return UdpScanEventExpression;
 	}

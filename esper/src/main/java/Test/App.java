@@ -14,7 +14,7 @@ import Development.jsonIO;
 import Development.logReaderDev;
 import NmapBeta.UdpScanEventSubscriber;
 import NmapBeta.AckScanEventSubscriber;
-import NmapBeta.ClosedPortCounterSubscriber;
+import NmapBeta.VerticalScanPortCounterSubscriber;
 import NmapBeta.HorizontalScanCounterSubscriber;
 import NmapBeta.PingScan;
 import NmapBeta.PortSpikeHorizontalSubscriber;
@@ -41,7 +41,7 @@ public class App {
 		EPAdministrator admin = engine.getEPAdministrator();
 
 		AckScanEventSubscriber ack = new AckScanEventSubscriber();
-		ClosedPortCounterSubscriber closedP = new ClosedPortCounterSubscriber();
+		VerticalScanPortCounterSubscriber closedP = new VerticalScanPortCounterSubscriber();
 		HorizontalScanCounterSubscriber horz = new HorizontalScanCounterSubscriber();
 		UdpScanEventSubscriber udp = new UdpScanEventSubscriber();
 		PortSpikeHorizontalSubscriber portS = new PortSpikeHorizontalSubscriber();
@@ -51,7 +51,7 @@ public class App {
 
 
 		admin.getConfiguration().addEventType(LogEventDev.class);
-		admin.getConfiguration().addEventType(ClosedPortCounterSubscriber.class);
+		admin.getConfiguration().addEventType(VerticalScanPortCounterSubscriber.class);
 		admin.getConfiguration().addEventType(AckScanEventSubscriber.class);
 		admin.getConfiguration().addEventType(UdpScanEventSubscriber.class);
 		admin.getConfiguration().addEventType(HorizontalScanCounterSubscriber.class);
